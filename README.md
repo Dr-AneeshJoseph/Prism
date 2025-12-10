@@ -1,4 +1,13 @@
 PRISM v1.0: Protocol for Rigorous Investigation of Scientific Mechanisms
+---
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![Status](https://img.shields.io/badge/Status-Prototype-orange)]()
+[![Claude AI](https://img.shields.io/badge/Optimized_For-Claude_Sonnet_4.5%2B-5A4FBB?logo=anthropic&logoColor=white)](https://www.anthropic.com)
+
+---
+
 > "Kill the weak hypotheses so the truth may survive."
 > 
 PRISM is a hypothesis evolutionary engine designed specifically for high-fidelity reasoning models (Claude Sonnet 4.5 and above). It provides a hardened epistemic structure that forces models to rigorously weigh competing hypotheses in a research problem area, systematically "killing off" invalid paths using a layered analysis architecture.

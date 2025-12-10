@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this framework in your research or decision-making systems, please cite it as follows."
+authors:
+  - family-names: "Joseph"
+    given-names: "Aneesh"
+    name-particle: "Dr."
+    role: "Promptware Architect"
+title: "PRISM: Protocol for Rigorous Investigation of Scientific Mechanisms"
+version: 1.0.0
+date-released: 2025-12-10
+url: "https://github.com/DrAneeshJoseph/prism-v1"
+license: MIT
+keywords:
+  - "decision-analysis"
+  - "bayesian-inference"
+  - "epistemic-safety"
+  - "risk-assessment"
+  - "causal-inference"
+abstract: >
+  A hardened decision analysis framework designed to prevent epistemic failure modes in automated reasoning. 
+  PRISM implements strict safety limits, numerical stability controls, and risk-aware utility modeling (CRRA) 
+  to ensure high-fidelity causal analysis.

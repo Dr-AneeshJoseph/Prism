@@ -1,22 +1,40 @@
 cff-version: 1.2.0
-message: "If you use this framework in your research or decision-making systems, please cite it as follows."
+message: "If you use PRISM in your research, please cite it as below."
+type: software
+title: "PRISM: Protocol for Rigorous Investigation of Scientific Mechanisms"
+version: 2.2.0
+date-released: 2025-01-01
+url: "https://github.com/Dr-AneeshJoseph/Prism"
+repository-code: "https://github.com/Dr-AneeshJoseph/Prism"
+license: MIT
 authors:
   - family-names: "Joseph"
     given-names: "Aneesh"
-    name-particle: "Dr."
-    role: "Promptware Architect"
-title: "PRISM: Protocol for Rigorous Investigation of Scientific Mechanisms"
-version: 1.0.0
-date-released: 2025-12-10
-url: "https://github.com/DrAneeshJoseph/prism-v1"
-license: MIT
+    alias: "Dr-AneeshJoseph"
 keywords:
-  - "decision-analysis"
-  - "bayesian-inference"
-  - "epistemic-safety"
-  - "risk-assessment"
-  - "causal-inference"
-abstract: >
-  A hardened decision analysis framework designed to prevent epistemic failure modes in automated reasoning. 
-  PRISM implements strict safety limits, numerical stability controls, and risk-aware utility modeling (CRRA) 
-  to ensure high-fidelity causal analysis.
+  - bayesian-inference
+  - hypothesis-testing
+  - meta-analysis
+  - scientific-methodology
+  - evidence-synthesis
+  - research-tools
+  - claude-ai
+  - promptware
+abstract: >-
+  PRISM is a Bayesian framework for quantitative hypothesis evaluation 
+  that integrates multiple statistical methods to convert heterogeneous 
+  scientific evidence into calibrated probability estimates. Key features 
+  include reference class priors with uncertainty quantification, 
+  hierarchical correlation correction, REML meta-analysis with 
+  Hartung-Knapp adjustment, P-curve publication bias detection, 
+  optimizer's curse correction, and Claude AI integration for 
+  automated evidence extraction.
+preferred-citation:
+  type: software
+  authors:
+    - family-names: "Joseph"
+      given-names: "Aneesh"
+  title: "PRISM: Protocol for Rigorous Investigation of Scientific Mechanisms"
+  version: 2.2.0
+  year: 2025
+  url: "https://github.com/Dr-AneeshJoseph/Prism"

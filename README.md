@@ -14,6 +14,18 @@
 
 ---
 
+## ⚠️ Disclaimer
+
+**PRISM is a research and educational tool.** It is NOT intended for:
+- Medical diagnosis or treatment decisions
+- Legal advice or proceedings
+- Financial investment decisions
+- Regulatory approval submissions
+
+PRISM provides **exploratory analysis** to aid human decision-making. Always consult qualified professionals for medical, legal, or financial decisions. The author assumes no liability for decisions made based on PRISM outputs.
+
+---
+
 ## Overview
 
 PRISM is a Bayesian framework for quantitative hypothesis evaluation that integrates multiple statistical methods to convert heterogeneous scientific evidence into calibrated probability estimates.
@@ -95,7 +107,7 @@ PRISM includes a Claude skill that enables AI-assisted hypothesis analysis with 
 
 ### Setup (One-Time)
 
-1. Download `claude/SKILL.md` from this repo
+1. Download `Claude/SKILL.md` from this repo
 2. In a Claude chat, upload the file
 3. Ask Claude: *"Install this as a user skill for PRISM"*
 4. Done! Future Claude sessions will know how to use PRISM
@@ -113,9 +125,9 @@ Claude will:
 3. Run PRISM analysis
 4. Present ranked results with uncertainty
 
-**See [`claude/README_CLAUDE.md`](claude/README_CLAUDE.md) for detailed instructions.**
+**See [`Claude/README_CLAUDE.md`](Claude/README_CLAUDE.md) for detailed instructions.**
 
-**Mobile users: See [`claude/MOBILE_QUICK_START.md`](claude/MOBILE_QUICK_START.md) for quick setup.**
+**Mobile users: See [`Claude/MOBILE_QUICK_START.md`](Claude/MOBILE_QUICK_START.md) for quick setup.**
 
 ---
 
@@ -126,8 +138,9 @@ Prism/
 ├── prism_v2_2.py              # Core PRISM engine
 ├── requirements.txt           # Python dependencies
 ├── README.md                  # This file
+├── THEORY_OF_OPERATION.md     # Scientific methodology
 │
-├── claude/                    # Claude AI integration
+├── Claude/                    # Claude AI integration
 │   ├── SKILL.md              # Skill file for Claude
 │   ├── prism_session.py      # Session management
 │   ├── README_CLAUDE.md      # Claude usage guide
@@ -136,11 +149,8 @@ Prism/
 ├── examples/                  # Example analyses
 │   └── example_osteoarthritis.py
 │
-├── versions/                  # Previous versions
-│   └── prism_v1.py
-│
-└── docs/
-    └── THEORY_OF_OPERATION.md # Scientific methodology
+└── Versions/                  # Previous versions
+    └── prism_v1.py
 ```
 
 ---
@@ -188,8 +198,8 @@ TF-IDF + author overlap + source overlap to detect redundant evidence.
 ## Examples
 
 ### Medical Research
-```python
-# Compare diabetes treatments - see examples/example_osteoarthritis.py
+```bash
+# Compare treatments - see examples/example_osteoarthritis.py
 python examples/example_osteoarthritis.py
 ```
 
@@ -269,3 +279,21 @@ GitHub: [@Dr-AneeshJoseph](https://github.com/Dr-AneeshJoseph)
 ## Acknowledgments
 
 Claude AI integration developed in collaboration with Anthropic's Claude.
+
+---
+
+## Appropriate Use
+
+### ✅ PRISM is appropriate for:
+- Exploratory analysis and hypothesis generation
+- Research prioritization and resource allocation
+- Structured evidence synthesis
+- Treatment comparison and decision support
+- Teaching Bayesian reasoning
+
+### ❌ PRISM is NOT appropriate for:
+- Regulatory approval decisions (use established methods)
+- Legal proceedings (requires validated forensic tools)
+- Fully automated decision-making
+- Single-study evaluation
+- Medical diagnosis without professional oversight

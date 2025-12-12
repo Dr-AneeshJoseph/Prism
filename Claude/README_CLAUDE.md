@@ -7,7 +7,7 @@ This directory contains files for using PRISM with Claude AI.
 ## What's in This Directory
 
 ```
-claude/
+Claude/
 ├── SKILL.md              # Skill file that Claude reads
 ├── prism_session.py      # Session management wrapper
 └── README_CLAUDE.md      # This file
@@ -39,7 +39,7 @@ In any new Claude chat, say:
 "Do you know about PRISM?"
 ```
 
-Claude should respond with knowledge of PRISM v2.3 methodology.
+Claude should respond with knowledge of PRISM v2.2 methodology.
 
 ---
 
@@ -267,7 +267,7 @@ When Claude runs PRISM, it creates:
 
 ## Updating to New Versions
 
-When PRISM gets updated (e.g., to v2.4):
+When PRISM gets updated (e.g., to v2.3):
 
 1. Download new `SKILL.md` from this directory
 2. Upload to Claude
@@ -293,7 +293,7 @@ When PRISM gets updated (e.g., to v2.4):
 ## Technical Details
 
 ### What the Skill Contains
-- PRISM v2.3 methodology
+- PRISM v2.2 methodology
 - Statistical methods (Bayesian, meta-analysis, etc.)
 - Best practices for evidence extraction
 - Checkpointing and resumability protocols
@@ -303,7 +303,7 @@ When PRISM gets updated (e.g., to v2.4):
 1. You mention PRISM in chat
 2. Claude automatically reads `/mnt/skills/user/prism/SKILL.md`
 3. Claude follows the methodology in the skill
-4. Claude uses `prism_v23.py` for calculations
+4. Claude uses `prism_v2_2.py` for calculations
 5. Results are saved and presented to you
 
 ---
@@ -312,7 +312,7 @@ When PRISM gets updated (e.g., to v2.4):
 
 If you're modifying PRISM:
 
-1. **Update prism_v23.py** - The core Python code
+1. **Update prism_v2_2.py** - The core Python code
 2. **Update SKILL.md** - The Claude instructions
 3. **Keep them synchronized** - Same version numbers
 4. **Test with Claude** - Before committing
@@ -324,9 +324,9 @@ If you're modifying PRISM:
 
 | PRISM Version | Skill Version | Compatible |
 |---------------|---------------|------------|
-| v2.3 | v2.3 | ✅ Yes |
-| v2.2 | v2.3 | ✅ Yes |
-| v2.3 | v2.2 | ⚠️ Limited |
+| v2.2 | v2.2 | ✅ Yes |
+| v2.1 | v2.2 | ✅ Yes |
+| v2.2 | v2.1 | ⚠️ Limited |
 
 **Recommendation:** Keep skill and code versions matched.
 

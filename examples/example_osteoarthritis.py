@@ -3,8 +3,16 @@ Example: Finding Best Hypothesis for Osteoarthritis Treatment
 Demonstrates complete PRISM v2.2 workflow with Claude
 """
 
-from prism_session import PRISMSession, create_evidence_from_dict
-from prism_v22 import Domain, Evidence
+import sys
+from pathlib import Path
+
+# Add parent directories to path for imports
+# This allows the example to run from the examples/ folder
+sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "Claude"))
+
+from Claude.prism_session import PRISMSession, create_evidence_from_dict
+from prism_v2_2 import Domain, Evidence
 
 def create_oa_example():
     """
@@ -181,7 +189,7 @@ def create_oa_example():
     
     h4_evidence = [
         Evidence(
-            id="jüni_2015",
+            id="juni_2015",
             content="Meta-analysis: Short-term benefit (4-6 weeks) but no long-term effect",
             source="Ann Intern Med 2015;162:46-54",
             domain=Domain.MEDICAL,
@@ -191,7 +199,7 @@ def create_oa_example():
             p_value=0.01,
             effect_size=-0.28,  # Short-term only
             effect_var=0.01210,
-            authors=["Jüni", "Reichenbach"],
+            authors=["Juni", "Reichenbach"],
         ),
         Evidence(
             id="mcalindon_2017",
@@ -232,7 +240,7 @@ def create_oa_example():
             p_value=0.04,
             effect_size=-0.21,
             effect_var=0.00810,
-            authors=["Rutjes", "Jüni"],
+            authors=["Rutjes", "Juni"],
         ),
         Evidence(
             id="jevsevar_2013",
@@ -421,4 +429,3 @@ if __name__ == "__main__":
     session = main()
     print("\n✅ Analysis complete!")
     print(f"\nTo view the report: view {session.results_dir / 'FINAL_REPORT.md'}")
-  

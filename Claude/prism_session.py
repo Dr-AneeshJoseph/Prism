@@ -12,7 +12,8 @@ from typing import List, Dict, Optional
 import numpy as np
 
 # Import core PRISM v2.2
-from prism_v22 import (
+# Note: The file is named prism_v2_2.py (with underscores)
+from prism_v2_2 import (
     Hypothesis, Evidence, Domain, StudyType,
     get_prior, Sensitivity, REF_PRIORS
 )
@@ -176,7 +177,7 @@ class PRISMSession:
                 supports=e_data['supports'],
                 p_value=e_data.get('p_value'),
                 effect_size=e_data.get('effect_size'),
-                effect_var=e_data.get('se'),
+                effect_var=e_data.get('effect_var'),
                 authors=e_data.get('authors', []),
             )
             h.add_evidence(e)
@@ -216,240 +217,241 @@ class PRISMSession:
         try:
             results = h.analyze()
             
-            # Display key results
-            print(f"\n✓ Analysis Complete")
-            print(f"  Bayesian Posterior: {results['posterior_bayes']:.1%} [{results['ci_bayes'][0]:.1%}, {results['ci_bayes'][1]:.1%}]")
+            # Print results
+            print("\n📊 RESULTS")
+            print("-" * 40)
+            print(f"Prior: {results['prior']:.1%} [{results['prior_ci'][0]:.1%}, {results['prior_ci'][1]:.1%}]")
+            print(f"Bayesian Posterior: {results['posterior_bayes']:.1%} [{results['ci_bayes'][0]:.1%}, {results['ci_bayes'][1]:.1%}]")
             
             if results['posterior_kalman']:
-                print(f"  Kalman Posterior: {results['posterior_kalman']:.1%} [{results['ci_kalman'][0]:.1%}, {results['ci_kalman'][1]:.1%}]")
+                print(f"Kalman Posterior: {results['posterior_kalman']:.1%} [{results['ci_kalman'][0]:.1%}, {results['ci_kalman'][1]:.1%}]")
             
-            if h.n_compared > 1:
-                print(f"  Corrected Posterior: {results['posterior_corrected']:.1%} (optimizer's curse adjusted)")
+            if results['posterior_corrected'] != results['posterior_bayes']:
+                print(f"Corrected Posterior: {results['posterior_corrected']:.1%} (optimizer's curse adjusted)")
+            
+            # Independence
+            if results['independence']:
+                indep = results['independence']
+                print(f"\nIndependence: {indep['avg_indep']:.1%} (effective N: {indep['eff_n']:.1f}/{indep['n']})")
             
             # Meta-analysis
             if results['meta_analysis'] and results['meta_analysis'].get('valid'):
                 ma = results['meta_analysis']
-                print(f"\n  Meta-Analysis:")
-                print(f"    Pooled Effect: {ma['est']:.3f} [{ma['ci'][0]:.3f}, {ma['ci'][1]:.3f}]")
-                print(f"    I²: {ma['i2']:.0f}% ({ma['heterogeneity']})")
+                print(f"\nMeta-Analysis:")
+                print(f"  Pooled: {ma['est']:.3f} [{ma['ci'][0]:.3f}, {ma['ci'][1]:.3f}]")
+                print(f"  I²: {ma['i2']:.0f}% ({ma['heterogeneity']})")
+            
+            # P-curve
+            if results['p_curve'] and results['p_curve'].get('valid'):
+                pc = results['p_curve']
+                print(f"\nP-Curve: {pc['interpretation']}")
+                if pc['p_hacking']:
+                    print("  ⚠️ P-hacking suspected!")
+            
+            # Uncertainty
+            unc = results['model_uncertainty']
+            print(f"\nUncertainty Breakdown:")
+            print(f"  Statistical: ±{unc['statistical']:.1%}")
+            print(f"  Prior: ±{unc['prior']:.1%}")
+            print(f"  Model: ±{unc['model']:.1%}")
+            print(f"  Total: ±{unc['total']:.1%}")
+            print(f"  Reliable: {unc['reliable']}")
             
             # Warnings
             if results['warnings']:
-                print(f"\n  ⚠️  Warnings:")
-                for w in results['warnings'][:3]:
-                    print(f"     {w}")
+                print(f"\n⚠️ Warnings:")
+                for w in results['warnings'][:5]:
+                    print(f"  - {w}")
             
-            # Checkpoint - save results
-            self._checkpoint_hypothesis(hypothesis_id, results)
+            # Save results
+            results_file = self.results_dir / f"{hypothesis_id}_results.json"
             
-            # Update token estimate
-            self.token_estimate += 5000  # Rough estimate per hypothesis
-            print(f"\n📊 Estimated tokens used so far: ~{self.token_estimate/1000:.0f}K")
+            # Convert numpy types for JSON
+            results_json = self._convert_for_json(results)
+            
+            with open(results_file, 'w') as f:
+                json.dump(results_json, f, indent=2)
+            
+            # Update state
+            h_meta['status'] = 'completed'
+            h_meta['results_file'] = str(results_file)
+            h_meta['posterior_bayes'] = results['posterior_bayes']
+            h_meta['posterior_corrected'] = results['posterior_corrected']
+            h_meta['evidence_count'] = len(h.evidence)
+            self.state['progress']['completed'] += 1
+            self.state['progress']['current'] = None
+            self._save_state()
+            
+            # Write resume instructions
+            self._write_resume_instructions()
+            
+            print(f"\n✅ Analysis complete: {hypothesis_id}")
+            print(f"   Results saved: {results_file.name}")
             
             return results
             
         except Exception as e:
-            print(f"\n❌ Error during analysis: {e}")
-            self.state['hypotheses'][hypothesis_id]['status'] = 'error'
-            self.state['hypotheses'][hypothesis_id]['error'] = str(e)
+            print(f"\n❌ Error analyzing {hypothesis_id}: {e}")
+            h_meta['status'] = 'error'
+            h_meta['error'] = str(e)
             self._save_state()
             raise
     
-    def _checkpoint_hypothesis(self, hypothesis_id: str, results: Dict):
-        """Save hypothesis analysis results and update state."""
-        
-        # Save detailed results to JSON
-        results_file = self.results_dir / f"{hypothesis_id}_results.json"
-        
-        # Make results JSON-serializable
-        serializable_results = self._make_serializable(results)
-        
-        with open(results_file, 'w') as f:
-            json.dump(serializable_results, f, indent=2)
-        
-        # Update state
-        self.state['hypotheses'][hypothesis_id]['status'] = 'completed'
-        self.state['hypotheses'][hypothesis_id]['posterior_bayes'] = float(results['posterior_bayes'])
-        self.state['hypotheses'][hypothesis_id]['posterior_corrected'] = float(results['posterior_corrected'])
-        self.state['hypotheses'][hypothesis_id]['results_file'] = str(results_file)
-        self.state['hypotheses'][hypothesis_id]['completed_at'] = datetime.now().isoformat()
-        
-        self.state['progress']['completed'] += 1
-        self.state['progress']['current'] = None
-        
-        self._save_state()
-        self._write_resume_instructions()
-        
-        print(f"💾 Results saved to: {results_file.name}")
-    
-    def _make_serializable(self, obj):
+    def _convert_for_json(self, obj):
         """Convert numpy types to Python types for JSON serialization."""
         if isinstance(obj, dict):
-            return {k: self._make_serializable(v) for k, v in obj.items()}
+            return {k: self._convert_for_json(v) for k, v in obj.items()}
         elif isinstance(obj, list):
-            return [self._make_serializable(item) for item in obj]
+            return [self._convert_for_json(v) for v in obj]
         elif isinstance(obj, tuple):
-            return tuple(self._make_serializable(item) for item in obj)
-        elif isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, (bool, np.bool_)):
-            return bool(obj)
+            return [self._convert_for_json(v) for v in obj]
         elif isinstance(obj, np.ndarray):
             return obj.tolist()
+        elif isinstance(obj, (np.integer, np.floating)):
+            return float(obj)
+        elif isinstance(obj, np.bool_):
+            return bool(obj)
         return obj
     
-    def analyze_all(self, set_n_compared: bool = True):
+    def analyze_all(self, set_n_compared: bool = True) -> Dict[str, Dict]:
         """
         Analyze all pending hypotheses.
-        Designed to complete in one session.
+        If set_n_compared=True, applies optimizer's curse correction.
         """
         
         pending = [h_id for h_id, h in self.state['hypotheses'].items() 
                   if h['status'] == 'pending']
         
         if not pending:
-            print("ℹ️  No pending hypotheses. All analyses complete.")
-            return self.generate_comparison()
-        
-        total = len(pending)
+            print("No pending hypotheses to analyze.")
+            return {}
         
         print(f"\n{'='*70}")
-        print(f"🚀 STARTING BATCH ANALYSIS")
+        print(f"🚀 PRISM v2.2 BATCH ANALYSIS")
         print(f"{'='*70}")
-        print(f"Hypotheses to analyze: {total}")
-        print(f"Expected completion: ONE session")
-        print(f"Estimated tokens: ~{total * 5}K")
-        print()
+        print(f"Hypotheses to analyze: {len(pending)}")
         
-        # Set n_compared for optimizer's curse correction
+        # Set n_compared for optimizer's curse
         if set_n_compared:
-            for h_id in pending:
-                h = self._load_hypothesis(h_id)
-                h.n_compared = total
-                self._save_hypothesis(h, self.hypotheses_dir / f"{h_id}.json", h_id)
+            n_total = len(self.state['hypotheses'])
+            print(f"Optimizer's curse correction: n={n_total}")
+            
+            # Update all hypotheses with n_compared
+            for h_id in self.state['hypotheses']:
+                h_file = self.hypotheses_dir / f"{h_id}.json"
+                with open(h_file) as f:
+                    h_data = json.load(f)
+                h_data['n_compared'] = n_total
+                with open(h_file, 'w') as f:
+                    json.dump(h_data, f, indent=2)
         
-        # Analyze each hypothesis
-        results_list = []
+        results = {}
         for i, h_id in enumerate(pending, 1):
-            print(f"\n[{i}/{total}] Starting analysis of {h_id}")
-            results = self.analyze_hypothesis(h_id)
-            results_list.append((h_id, results))
+            print(f"\n[{i}/{len(pending)}] ", end="")
+            try:
+                results[h_id] = self.analyze_hypothesis(h_id)
+            except Exception as e:
+                print(f"Failed: {e}")
+                results[h_id] = {'error': str(e)}
+        
+        # Generate comparison
+        self._generate_comparison()
         
         print(f"\n{'='*70}")
         print(f"✅ BATCH ANALYSIS COMPLETE")
         print(f"{'='*70}")
-        print(f"Analyzed: {total} hypotheses")
-        print(f"Tokens used: ~{self.token_estimate/1000:.0f}K / 190K")
-        print()
+        print(f"Completed: {self.state['progress']['completed']}/{self.state['progress']['total']}")
         
-        # Generate comparison
-        return self.generate_comparison()
+        return results
     
-    def generate_comparison(self) -> Dict:
-        """Compare all completed hypotheses with optimizer's curse correction."""
+    def _generate_comparison(self):
+        """Generate comparative analysis of all completed hypotheses."""
         
         completed = {h_id: h for h_id, h in self.state['hypotheses'].items() 
                     if h['status'] == 'completed'}
         
         if len(completed) < 2:
-            print("ℹ️  Need at least 2 completed hypotheses for comparison.")
-            return {}
+            return
         
-        print(f"\n{'='*70}")
-        print(f"📊 COMPARATIVE ANALYSIS")
-        print(f"{'='*70}\n")
-        
-        # Collect posteriors
-        posteriors = {}
-        corrected_posteriors = {}
-        
-        for h_id, h_meta in completed.items():
-            posteriors[h_id] = h_meta['posterior_bayes']
-            corrected_posteriors[h_id] = h_meta['posterior_corrected']
-        
-        # Find best hypothesis
-        best_id = max(corrected_posteriors, key=corrected_posteriors.get)
-        best_posterior = corrected_posteriors[best_id]
-        
-        # Rank all
-        ranked = sorted(corrected_posteriors.items(), key=lambda x: -x[1])
+        # Rank by corrected posterior
+        ranked = sorted(
+            completed.items(),
+            key=lambda x: x[1].get('posterior_corrected', 0),
+            reverse=True
+        )
         
         comparison = {
+            'generated': datetime.now().isoformat(),
             'n_hypotheses': len(completed),
-            'best_hypothesis': best_id,
-            'best_title': completed[best_id]['title'],
-            'posterior_corrected': best_posterior,
-            'ranking': ranked,
-            'all_posteriors': posteriors,
-            'all_corrected_posteriors': corrected_posteriors,
-            'generated_at': datetime.now().isoformat()
+            'ranking': [
+                {
+                    'rank': i + 1,
+                    'hypothesis_id': h_id,
+                    'title': h['title'],
+                    'posterior_corrected': h.get('posterior_corrected'),
+                    'posterior_bayes': h.get('posterior_bayes'),
+                }
+                for i, (h_id, h) in enumerate(ranked)
+            ],
+            'best': ranked[0][0] if ranked else None,
         }
-        
-        # Save comparison
-        comp_file = self.results_dir / "comparison.json"
-        with open(comp_file, 'w') as f:
-            json.dump(comparison, f, indent=2)
         
         self.state['comparison'] = comparison
         self._save_state()
         
-        # Display
-        print(f"🏆 Best Hypothesis: {best_id}")
-        print(f"   {completed[best_id]['title']}")
-        print(f"   Posterior (corrected): {best_posterior:.1%}")
-        print()
-        print("📋 Full Ranking:")
-        for i, (h_id, post) in enumerate(ranked, 1):
-            symbol = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}."
-            print(f"   {symbol} {h_id}: {post:.1%} - {completed[h_id]['title']}")
+        # Save comparison file
+        comp_file = self.results_dir / "comparison.json"
+        with open(comp_file, 'w') as f:
+            json.dump(comparison, f, indent=2)
         
-        return comparison
+        print(f"\n📊 COMPARATIVE ANALYSIS")
+        print("-" * 40)
+        for item in comparison['ranking']:
+            medal = {1: '🥇', 2: '🥈', 3: '🥉'}.get(item['rank'], '  ')
+            print(f"{medal} {item['hypothesis_id']}: {item['posterior_corrected']:.1%}")
+        print(f"\n🏆 Best: {comparison['best']}")
     
-    def generate_report(self, include_evidence: bool = True) -> str:
+    def generate_report(self) -> str:
         """Generate comprehensive markdown report."""
         
         lines = [
-            f"# PRISM v2.2 Analysis Report",
-            f"## {self.project_name}",
+            f"# PRISM Analysis Report: {self.project_name}",
             "",
-            f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  ",
-            f"**Version:** PRISM v2.2  ",
-            f"**Author:** Dr. Aneesh Joseph",
+            f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M')}  ",
+            f"**Version:** PRISM v2.2",
             "",
             "---",
             "",
-        ]
-        
-        # Summary
-        lines.extend([
             "## Executive Summary",
             "",
-            f"**Total Hypotheses Analyzed:** {self.state['progress']['completed']}  ",
-            f"**Status:** {self.state['progress']['status']}",
-            "",
-        ])
+        ]
         
-        # Comparison
-        if self.state['comparison']:
+        # Comparison summary
+        if self.state.get('comparison'):
             comp = self.state['comparison']
+            best_id = comp['best']
+            best_h = self.state['hypotheses'][best_id]
+            
             lines.extend([
-                f"**Best Hypothesis:** {comp['best_hypothesis']} - {comp['best_title']}  ",
-                f"**Posterior Probability (corrected):** {comp['posterior_corrected']:.1%}",
+                f"**Best Hypothesis:** {best_h['title']}  ",
+                f"**Posterior Probability:** {best_h['posterior_corrected']:.1%}",
                 "",
                 "### Ranking",
                 "",
+                "| Rank | Hypothesis | Posterior |",
+                "|------|------------|-----------|",
             ])
             
-            for i, (h_id, post) in enumerate(comp['ranking'], 1):
-                h_meta = self.state['hypotheses'][h_id]
-                lines.append(f"{i}. **{h_id}** ({post:.1%}) - {h_meta['title']}")
+            for item in comp['ranking']:
+                lines.append(f"| {item['rank']} | {item['title'][:40]}... | {item['posterior_corrected']:.1%} |")
             
             lines.extend(["", "---", ""])
         
-        # Detailed Results
-        lines.extend(["## Detailed Results", ""])
+        # Individual hypothesis details
+        lines.extend([
+            "## Detailed Results",
+            "",
+        ])
         
         for h_id, h_meta in self.state['hypotheses'].items():
             if h_meta['status'] != 'completed':
@@ -660,7 +662,7 @@ def create_evidence_from_dict(data: Dict) -> Evidence:
         supports=data['supports'],
         p_value=data.get('p_value'),
         effect_size=data.get('effect_size'),
-        effect_var=data.get('se'),
+        effect_var=data.get('effect_var'),
         authors=data.get('authors', []),
     )
 

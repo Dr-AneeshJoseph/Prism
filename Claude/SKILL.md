@@ -80,7 +80,7 @@ Effective N = Σ(cluster_size / DEFF_within) / √DEFF_between
 ### File Structure
 ```
 /home/claude/
-├── prism_v22.py           # Core PRISM engine (Dr. Joseph's implementation)
+├── prism_v2_2.py          # Core PRISM engine (Dr. Joseph's implementation)
 ├── prism_session.py       # Session management with checkpointing
 └── example_*.py           # Example analyses
 
@@ -100,7 +100,7 @@ Effective N = Σ(cluster_size / DEFF_within) / √DEFF_between
 
 ```python
 from prism_session import PRISMSession
-from prism_v22 import Evidence, Domain
+from prism_v2_2 import Evidence, Domain
 
 # 1. Create session
 session = PRISMSession("project_name")
@@ -383,5 +383,3 @@ e = Evidence(id, content, source, domain, study_design,
 ---
 
 **PRISM v2.2 - Rigorous hypothesis evaluation for evidence-based science**
-
-For full mathematical details, see: `/mnt/user-data/uploads/PRISM_v22_Scientific_Guide.md`

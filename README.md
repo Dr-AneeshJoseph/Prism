@@ -1,315 +1,271 @@
-# PRISM v1.1: Protocol for Rigorous Investigation of Scientific Mechanisms
+# PRISM v2.2
+## Protocol for Rigorous Investigation of Scientific Mechanisms
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
-[![Status](https://img.shields.io/badge/Status-Production-green)](/Dr-AneeshJoseph/Prism/blob/main)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-green)](https://github.com/Dr-AneeshJoseph/Prism)
 [![Claude AI](https://img.shields.io/badge/Optimized_For-Claude_Sonnet_4.5%2B-5A4FBB?logo=anthropic&logoColor=white)](https://www.anthropic.com)
-[![Security](https://img.shields.io/badge/Security-A--Grade-brightgreen)](CHANGELOG.md)
 
 ---
+
+**Author:** Dr. Aneesh Joseph  
+**Status:** Production Ready  
+**License:** MIT
+
+---
+
+## Overview
+
+PRISM is a Bayesian framework for quantitative hypothesis evaluation that integrates multiple statistical methods to convert heterogeneous scientific evidence into calibrated probability estimates.
 
 > "Kill the weak hypotheses so the truth may survive."
 
-PRISM is a hypothesis evolutionary engine designed specifically for high-fidelity reasoning models (Claude Sonnet 4.5 and above). It provides a hardened epistemic structure that forces models to rigorously weigh competing hypotheses in a research problem area, systematically "killing off" invalid paths using a layered analysis architecture.
-
-**Promptware Architect:** Dr. Aneesh Joseph
-
----
-
-## 🆕 What's New in v1.1
-
-**Security Grade: B+ → A-** | **Risk Level: MEDIUM-HIGH → MEDIUM**
-
-Version 1.1 addresses all critical vulnerabilities identified in the second-round red team analysis:
-
-| Fix | Description | Impact |
-|-----|-------------|--------|
-| 🔒 **Semantic Independence** | Name normalization + entity extraction | Catches same study reported multiple ways |
-| 🛡️ **100+ Content Patterns** | Euphemism detection for legal/safety/financial | No more "regulatory gray area" evasion |
-| ✅ **Verified Establishment** | Requires evidence for "established" claims | Prevents bias check bypass |
-| 📊 **Smart Warnings** | Deduplication + aggregation + blocking | Critical warnings no longer buried |
-| 🎯 **Sample Size Validation** | Cross-checks claimed N vs content | Catches subgroup gaming |
-| ⚖️ **Weight Enforcement** | Blocking mode (not just warnings) | Prevents dimension manipulation |
-| 📈 **Risk Aversion Guidance** | Domain defaults + sensitivity display | Consistent risk handling |
-| 🚫 **Fatal Flaw Blocking** | Analysis halts until resolved | No silent pass-through |
-
-See [CHANGELOG.md](CHANGELOG.md) for complete details.
+**Key Features:**
+- Bayesian updating with reference class priors (with uncertainty quantification)
+- Hierarchical correlation correction (addresses the "deadly product" problem)
+- REML meta-analysis with Hartung-Knapp adjustment
+- P-curve publication bias detection
+- Optimizer's curse correction for multiple comparisons
+- Uncertainty decomposition (statistical + prior + model)
+- Kalman filtering for temporal evidence streams
 
 ---
 
-## 🎯 Core Philosophy
+## Installation
 
-Standard analytical tools often suffer from "Epistemic Drift"—they try to make every idea sound plausible. PRISM acts as a **Sincerity Firewall**.
-
-It operates on three principles:
-
-1. **Hypothesis Selection:** Creates a hierarchy of truth, identifying the single best explanation
-2. **Fatal Flaw Detection:** Employs a "Kill Switch" for safety/legal violations or feasibility failures
-3. **Layered Filtration:** Analysis occurs in 5 distinct layers, moving from definition to decision
-
----
-
-## 🏗️ The 5-Layer Architecture
-
-PRISM filters noise through a structured cognitive loop:
-
-| Layer | Function | Mechanism |
-|-------|----------|-----------|
-| **L0** | Characterization | Defines the "Epistemic Target." What strictly counts as a solution? |
-| **L0.5** | Pre-flight Safety | Checks evidence sufficiency, independence, and fatal content |
-| **L1** | Mechanism Mapping | Maps causal nodes. Quality-First Inference weights evidence properly |
-| **L2** | Adversarial Testing | The "Red Team" layer. Scans for 7 cognitive biases and content flags |
-| **L3** | Sensitivity Analysis | Tests numerical stability with ±10% and ±20% perturbations |
-| **L4** | The Kill Switch | Gate Checks. Hypotheses with fatal flaws are **blocked** here |
-| **L5** | Selection | Synthesis of surviving branches using Risk-Aware Utility (CRRA) |
-
----
-
-## 📂 Repository Contents
-
-| File | Description |
-|------|-------------|
-| `prism_v1_1.py` | **Core Framework v1.1.** Complete logic engine with all security fixes |
-| `prism_v1.py` | Legacy v1.0 (kept for backwards compatibility) |
-| `prism_usage_examples.py` | Tutorials. 6 comprehensive scenarios |
-| `prism_v1_1_fix_tests.py` | Security verification test suite |
-| `CHANGELOG.md` | Detailed documentation of all v1.1 fixes |
-| `THEORY_OF_OPERATION.md` | Deep dive into PRISM's design philosophy |
-
----
-
-## 🚀 Quick Start
-
-### Installation
+### Standard Python Usage
 
 ```bash
+# Clone the repository
 git clone https://github.com/Dr-AneeshJoseph/Prism.git
 cd Prism
-pip install numpy
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run example
+python examples/example_osteoarthritis.py
 ```
 
-### Usage: The Hypothesis Battle
+### Requirements
+- Python 3.8+
+- NumPy
+- SciPy
+
+---
+
+## Quick Start
 
 ```python
-from prism_v1_1 import (
-    AnalysisElement, Evidence, EvidenceDomain, CausalLevel,
-    run_analysis, explain_result, EstablishedHypothesisEvidence
+from prism_v2_2 import Hypothesis, Evidence, Domain
+
+# Create hypothesis with reference class prior
+h = Hypothesis(
+    "Drug X reduces symptoms by >20%",
+    Domain.MEDICAL,
+    ref_class="phase2_clinical"  # 15% base rate from FDA data
 )
 
-# 1. Initialize the Hypothesis
-h = AnalysisElement(name="Strategic Pivot", domain=EvidenceDomain.BUSINESS)
-
-# 2. Set Foundation (The Logic Core)
-h.set_what("Pivot to B2B Model", 0.85)
-h.set_why("Market opportunity in enterprise segment", 0.8)
-h.set_how("Leverage existing tech stack with new sales motion", 0.7)
-h.set_feasibility(technical=0.8, economic=0.7, timeline=0.65)
-
-# 3. Add Evidence (System checks independence, quality, and content)
+# Add evidence
 h.add_evidence(Evidence(
-    id="market_data",
-    content="Competitor analysis shows 40% growth in B2B sector",
-    source="Industry Report 2024",
-    quality=0.8,
-    date="2024-06",
-    domain=EvidenceDomain.BUSINESS,
-    study_design="benchmark",
-    sample_size=500,
-    causal_level=CausalLevel.ASSOCIATION,
-    supports_hypothesis=True,
-    authors=["Smith, J.", "Jones, M."]
+    id="rct_2024",
+    content="RCT shows 25% reduction",
+    source="NEJM 2024",
+    domain=Domain.MEDICAL,
+    study_design="rct",
+    sample_size=200,
+    supports=True,
+    p_value=0.01,
+    effect_size=-0.45,
+    effect_var=0.0144,
+    authors=["Smith"]
 ))
 
-# 4. Add scenarios for utility calculation
-h.add_scenario("Strong adoption", 0.3, 1.5)
-h.add_scenario("Moderate success", 0.4, 0.4)
-h.add_scenario("Slow growth", 0.2, -0.1)
-h.add_scenario("Pivot fails", 0.1, -0.8)
-
-# 5. Run the 5-Layer Analysis
-results = run_analysis(h, rigor_level=2, max_iter=10)
-
-# 6. View the Results
-print(explain_result(results))
-```
-
-### Verify Security Fixes
-
-```bash
-python prism_v1_1_fix_tests.py
-```
-
-Expected output:
-```
-✅ Passed: 8/8
-🎉 ALL P0 AND P1 FIXES VERIFIED!
+# Analyze
+results = h.analyze()
+print(f"Posterior: {results['posterior_bayes']:.1%}")
+print(f"95% CI: [{results['ci_bayes'][0]:.1%}, {results['ci_bayes'][1]:.1%}]")
 ```
 
 ---
 
-## 🛡️ Safety & Governance
+## Using PRISM with Claude AI
 
-PRISM enforces a "Constitution" of reasoning via the `SafetyLimits` class.
+PRISM includes a Claude skill that enables AI-assisted hypothesis analysis with automatic evidence extraction from the web.
 
-### The Warning System (v1.1 Enhanced)
+### Setup (One-Time)
 
-The system proactively alerts or **blocks** if it detects:
+1. Download `claude/SKILL.md` from this repo
+2. In a Claude chat, upload the file
+3. Ask Claude: *"Install this as a user skill for PRISM"*
+4. Done! Future Claude sessions will know how to use PRISM
 
-| Issue | v1.0 Behavior | v1.1 Behavior |
-|-------|---------------|---------------|
-| 🔴 Fatal Content | Warning only | **BLOCKS analysis** |
-| 🔴 Weight Violations | Warning only | **BLOCKS analysis** |
-| 🟠 Low Independence | Individual warnings | Aggregated summary |
-| 🟠 High Credence | Warning at 95% | Warning + explanation |
-| 🟡 Calibration Cold Start | Silent | Explicit tracking |
+### Usage with Claude
 
-### Blocking vs Warning
+Simply ask:
+```
+"Use PRISM to find the best treatment for [condition]"
+```
 
+Claude will:
+1. Search for relevant studies
+2. Extract evidence automatically
+3. Run PRISM analysis
+4. Present ranked results with uncertainty
+
+**See [`claude/README_CLAUDE.md`](claude/README_CLAUDE.md) for detailed instructions.**
+
+**Mobile users: See [`claude/MOBILE_QUICK_START.md`](claude/MOBILE_QUICK_START.md) for quick setup.**
+
+---
+
+## Directory Structure
+
+```
+Prism/
+├── prism_v2_2.py              # Core PRISM engine
+├── requirements.txt           # Python dependencies
+├── README.md                  # This file
+│
+├── claude/                    # Claude AI integration
+│   ├── SKILL.md              # Skill file for Claude
+│   ├── prism_session.py      # Session management
+│   ├── README_CLAUDE.md      # Claude usage guide
+│   └── MOBILE_QUICK_START.md # Mobile quick start
+│
+├── examples/                  # Example analyses
+│   └── example_osteoarthritis.py
+│
+├── versions/                  # Previous versions
+│   └── prism_v1.py
+│
+└── docs/
+    └── THEORY_OF_OPERATION.md # Scientific methodology
+```
+
+---
+
+## Key Improvements in v2.2
+
+### 1. Reference Class Priors with Uncertainty
+Instead of point estimates, priors are now Beta distributions with credible intervals:
 ```python
-# v1.1 blocking behavior
-results = run_analysis(h)
-
-if results.get('blocked'):
-    print("Analysis BLOCKED:", results['blocking_reasons'])
-    # Must resolve issues before proceeding
-else:
-    print("Decision:", results['recommendation'])
+# Phase 2 clinical: 15% [8%, 24%] based on FDA 2000-2020 data
+h = Hypothesis("Drug efficacy", Domain.MEDICAL, ref_class="phase2_clinical")
 ```
 
-### Risk-Aware Utility (CRRA)
-
-Unlike standard decision trees, PRISM models "Ruin." It uses Constant Relative Risk Aversion to penalize hypotheses with catastrophic failure risk.
-
-**v1.1 Enhancement:** Domain-specific defaults
-
-| Domain | Default γ | Rationale |
-|--------|-----------|-----------|
-| Medical | 2.5 | Higher risk aversion for health decisions |
-| Business | 1.5 | Balanced approach |
-| Technology | 1.0 | More risk tolerance for innovation |
-| Policy | 2.0 | Conservative for public impact |
-
----
-
-## 📊 Risk Assessment
-
-### Current State (PRISM v1.1 - Grade A-)
-
-**Safe For:**
-- Business decisions up to $5M
-- Clinical research (non-treatment)
-- Policy analysis
-- Strategic planning
-- Team decision-making
-
-**Use With Caution:**
-- Medical treatment decisions (require expert review)
-- Investments >$5M (require additional validation)
-- Regulatory submissions (require human oversight)
-
-**Not Recommended:**
-- Fully autonomous life-critical systems
-- Final medical approvals without physician review
-
----
-
-## 🔧 Key v1.1 Features
-
-### 1. Semantic Independence Checking
-
+### 2. Hierarchical Correlation Correction
+Addresses the "deadly product" problem where naive LR multiplication gives overconfident results:
 ```python
-# v1.0: These would be counted as independent
-e1 = Evidence(..., authors=["Smith, J."])
-e2 = Evidence(..., authors=["Dr. Jane Smith"])  # Same person!
-
-# v1.1: Detected as related (60% independence penalty)
-report = h.check_evidence_independence()
-print(f"Effective evidence: {report['effective_evidence_count']}")
+# Automatically detects correlated evidence (same authors, similar methods)
+# Applies design effect adjustment: LR^(1/√DEFF)
 ```
 
-### 2. Established Hypothesis Verification
-
+### 3. Optimizer's Curse Correction
+When comparing multiple hypotheses, the "winner" is shrunk to account for selection bias:
 ```python
-# v1.0: Could bypass bias checks
-h.set_established_hypothesis(True)  # No verification!
-
-# v1.1: Requires evidence
-evidence = EstablishedHypothesisEvidence(
-    claim="Aspirin reduces inflammation",
-    supporting_references=["Vane 1971"],
-    meta_analyses_cited=3,
-    expert_consensus=True
-)
-h.set_established_hypothesis(True, evidence)  # Verified ✓
+# Raw: 85% → Corrected (n=10 hypotheses): 71%
 ```
 
-### 3. Content Scanner with Euphemism Detection
+### 4. Enhanced Independence Detection
+TF-IDF + author overlap + source overlap to detect redundant evidence.
 
+---
+
+## Available Reference Classes
+
+| Reference Class | Prior | 95% CI | Source |
+|----------------|-------|--------|--------|
+| `phase2_clinical` | 15% | [8%, 24%] | FDA 2000-2020 |
+| `phase3_clinical` | 35% | [26%, 45%] | FDA 2000-2020 |
+| `drug_approval` | 10% | [5%, 18%] | FDA 2000-2020 |
+| `startup_5yr` | 10% | [5%, 18%] | CB Insights |
+| `replication` | 40% | [31%, 50%] | OSF 2015 |
+| `general` | 50% | [32%, 68%] | Uninformative |
+
+---
+
+## Examples
+
+### Medical Research
 ```python
-# v1.0: Missed euphemisms
-"regulatory gray area"      # NOT detected
-"adverse events of concern" # NOT detected
-
-# v1.1: 100+ patterns including euphemisms
-"regulatory gray area"      # DETECTED (legal, severity=0.7)
-"adverse events of concern" # DETECTED (safety, severity=0.8)
+# Compare diabetes treatments - see examples/example_osteoarthritis.py
+python examples/example_osteoarthritis.py
 ```
 
-### 4. Smart Warning Aggregation
-
-```python
-# v1.0: 45 individual warnings
-# v1.1: Aggregated summary
-print(h.warning_system.get_summary_header())
-# Output: "🚨 CRITICAL: 2 | ⚠️ WARNING: 5 | ℹ️ INFO: 3"
+### With Claude AI
 ```
+You: "Use PRISM to compare treatments for knee osteoarthritis"
 
----
+Claude: [Searches literature, extracts evidence, runs analysis]
 
-## 🤝 Contributing
-
-This project prioritizes epistemic integrity. Please review [Contributing.md](Contributing.md) before submitting pull requests.
-
-**Important:** Changes to `SafetyLimits` are heavily scrutinized to maintain the framework's rigorous standards.
-
-### Running Tests
-
-```bash
-# Run security verification
-python prism_v1_1_fix_tests.py
-
-# Run usage examples
-python prism_usage_examples.py
+Result:
+🏆 Combined weight loss + exercise: 84.2%
+🥈 Exercise alone: 78.5%
+🥉 Weight loss alone: 76.1%
+...
 ```
 
 ---
 
-## 📄 License
+## Citation
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+If you use PRISM in your research, please cite:
 
-Copyright © 2025 Dr. Aneesh Joseph
-
----
-
-## 📈 Version History
-
-| Version | Grade | Key Changes |
-|---------|-------|-------------|
-| v1.1 | A- | All P0/P1 security fixes, blocking mode, semantic analysis |
-| v1.0 | B+ | Initial release, fixed 18 vulnerabilities from v2.0 prototype |
-
----
-
-## 🙏 Acknowledgments
-
-- Red Team Analysis contributors for identifying vulnerabilities
-- Claude AI team at Anthropic for the reasoning model
-- All contributors and testers
+```bibtex
+@software{joseph2025prism,
+  author = {Joseph, Aneesh},
+  title = {PRISM: Protocol for Rigorous Investigation of Scientific Mechanisms},
+  year = {2025},
+  version = {2.2},
+  url = {https://github.com/Dr-AneeshJoseph/Prism}
+}
+```
 
 ---
 
-**Current Version:** 1.1  
-**Security Grade:** A-  
-**Risk Level:** MEDIUM  
-**Last Updated:** December 2025
+## Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+See [Contributing.md](Contributing.md) for detailed guidelines.
+
+---
+
+## Version History
+
+### v2.2 (Current)
+- Reference class priors with Beta distribution uncertainty
+- Hierarchical correlation correction
+- Optimizer's curse adjustment
+- P-curve publication bias detection
+- Kalman filtering for temporal evidence
+- Claude AI integration with skills
+
+### v1.0
+- Initial public release
+- Basic 5-layer architecture
+- Safety limits and kill switches
+
+---
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## Contact
+
+**Dr. Aneesh Joseph**  
+GitHub: [@Dr-AneeshJoseph](https://github.com/Dr-AneeshJoseph)
+
+---
+
+## Acknowledgments
+
+Claude AI integration developed in collaboration with Anthropic's Claude.
